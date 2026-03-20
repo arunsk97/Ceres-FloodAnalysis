@@ -1,0 +1,87 @@
+# =========================
+# OPERATING SYSTEM
+# =========================
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# =========================
+# ANGULAR FRONTEND
+# =========================
+# Node
+/Frontend/node_modules/
+/Frontend/npm-debug.log
+/Frontend/yarn-error.log
+
+# IDEs and Editors
+/Frontend/.idea/
+/Frontend/.project
+/Frontend/.classpath
+/Frontend/.c9/
+/Frontend/*.launch
+/Frontend/.settings/
+/Frontend/*.sublime-workspace
+
+# IDE - VSCode
+/Frontend/.vscode/*
+!/Frontend/.vscode/settings.json
+!/Frontend/.vscode/tasks.json
+!/Frontend/.vscode/launch.json
+!/Frontend/.vscode/extensions.json
+
+# Angular 
+/Frontend/.angular/
+/Frontend/dist/
+/Frontend/tmp/
+/Frontend/out-tsc/
+/Frontend/bazel-out/
+
+# Environments
+/Frontend/.env
+/Frontend/.env.*
+
+# =========================
+# DOTNET BACKEND
+# =========================
+# Build results
+Backend/FloodAssessment.Api/[Bb]in/
+Backend/FloodAssessment.Api/[Oo]bj/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio / Visual Studio Code options
+.vscode/
+.vs/
+
+# Databases
+Backend/FloodAssessment.Api/*.db
+Backend/FloodAssessment.Api/*.db-shm
+Backend/FloodAssessment.Api/*.db-wal
+Backend/FloodAssessment.Api/*.sqlite
+
+# Local Environment variables
+Backend/FloodAssessment.Api/appsettings.Development.json

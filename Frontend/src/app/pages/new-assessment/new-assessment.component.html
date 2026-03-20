@@ -1,0 +1,161 @@
+<div class="new-assessment container">
+  <div class="top-nav">
+    <button class="icon-btn" routerLink="/dashboard">
+      <span class="material-icons">close</span>
+    </button>
+    <div class="nav-title">{{ editingId ? 'Edit Assessment' : 'New Assessment' }}</div>
+    <span class="sync-now-badge">SYNC NOW</span>
+  </div>
+
+  <form [formGroup]="assessmentForm" (ngSubmit)="saveAssessment()">
+    
+    <div class="card telemetry-card">
+      <label class="section-label">LOCATION CAPTURED</label>
+      <div class="telemetry-content">
+        <div class="telemetry-data">
+          <div class="lat-long">
+            <span class="label">LATITUDE</span>
+            <strong>{{ assessmentForm.get('latitude')?.value | number:'1.4-4' }}° N</strong>
+          </div>
+          <div class="lat-long">
+            <span class="label">LONGITUDE</span>
+            <strong>{{ assessmentForm.get('longitude')?.value | number:'1.4-4' }}° W</strong>
+          </div>
+        </div>
+        <div class="map-placeholder">
+          <!-- A placeholder to represent the map tile from the mockup -->
+          <div class="map-inner">
+            <span class="material-icons pin">location_on</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Site Address & Identification combined for UI layout as per mockup -->
+    <div class="form-group">
+      <label class="section-label">SITE ADDRESS</label>
+      <!-- We bind to both, but display Address in this big block -->
+      <input class="custom-input address-input" type="text" formControlName="address" placeholder="e.g. Oak Ridge Farm, Sector 4-B">
+    </div>
+    <div class="form-group hidden-farm-name">
+      <input class="custom-input" type="text" formControlName="farmName" placeholder="Site Name (Internal)">
+    </div>
+
+    <!-- Farm Condition -->
+    <div class="form-group">
+      <label class="section-label">FARM CONDITION</label>
+      <div class="toggle-group condition-toggles">
+        <label [class.active-good]="assessmentForm.get('condition')?.value == 0">
+          <input type="radio" formControlName="condition" [value]="0">
+          <span class="material-icons">sentiment_satisfied_alt</span>
+          GOOD
+        </label>
+
+        <label [class.active-moderate]="assessmentForm.get('condition')?.value == 1">
+          <input type="radio" formControlName="condition" [value]="1">
+          <span class="material-icons">sentiment_neutral</span>
+          MODERATE
+        </label>
+
+        <label [class.active-bad]="assessmentForm.get('condition')?.value == 2">
+          <input type="radio" formControlName="condition" [value]="2">
+          <span class="material-icons">sentiment_dissatisfied</span>
+          BAD
+        </label>
+      </div>
+    </div>
+
+    <!-- Condition Comments -->
+    <div class="form-group">
+      <label class="section-label">CONDITION COMMENTS</label>
+      <textarea class="custom-textarea" formControlName="conditionComments" rows="3" placeholder="Add field notes regarding farm condition..."></textarea>
+    </div>
+
+    <!-- Live Inventory -->
+    <div class="form-group total-chickens-group">
+      <label class="section-label">TOTAL CHICKENS</label>
+      <div class="counter-row">
+        <button type="button" class="icon-btn-pill" (click)="incrementChickens(-10)">
+          <span class="material-icons">remove</span>
+        </button>
+        <input type="number" class="counter-input-field" formControlName="totalChickens">
+        <button type="button" class="icon-btn-pill" (click)="incrementChickens(10)">
+          <span class="material-icons">add</span>
+        </button>
+      </div>
+      <div class="error" *ngIf="assessmentForm.get('totalChickens')?.hasError('negativeNumber')">
+        Live inventory cannot be negative.
+      </div>
+    </div>
+
+    <!-- Livestock Notes -->
+    <div class="form-group">
+      <label class="section-label">LIVESTOCK NOTES</label>
+      <textarea class="custom-textarea" formControlName="livestockNotes" rows="3" placeholder="Observations (e.g., birds appear distressed, water lines broken...)"></textarea>
+    </div>
+
+    <!-- Site Infrastructure -->
+    <div class="form-group infrastructure-group">
+      <label class="section-label">SITE INFRASTRUCTURE</label>
+      <div class="infrastructure-card">
+        <div class="toggle-row">
+          <div class="toggle-label"><span class="material-icons icon-green">water_drop</span> Water Access</div>
+          <label class="switch">
+            <input type="checkbox" formControlName="waterAccess">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-label"><span class="material-icons icon-green">grid_on</span> Perimeter Fence</div>
+          <label class="switch">
+            <input type="checkbox" formControlName="perimeterFence">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-label"><span class="material-icons icon-green">air</span> Ventilation</div>
+          <label class="switch">
+            <input type="checkbox" formControlName="ventilation">
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Site Documentation -->
+    <div class="form-group file-upload-group">
+      <div class="docs-header">
+        <label class="section-label">SITE DOCUMENTATION</label>
+        <span class="photo-count">{{ photosBase64.length }} Photo(s) Captured</span>
+      </div>
+      
+      <div class="docs-grid">
+        <div class="upload-btn-card">
+          <button type="button" class="btn-capture">
+            <span class="material-icons">camera_alt</span>
+            <span class="capture-text">CAPTURE PHOTO</span>
+          </button>
+          <input type="file" accept="image/*" multiple (change)="onFileSelected($event)" [disabled]="photosBase64.length >= 4" />
+        </div>
+        <div class="photos-preview">
+          <!-- Actual Photos -->
+          <div class="fake-photo" *ngFor="let photo of photosBase64" [style.background-image]="'url(' + photo + ')'"></div>
+          
+          <!-- Empty Slots -->
+          <div class="fake-photo empty-more" *ngFor="let slot of getEmptySlots()">
+             <span class="material-icons">image</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="btn-primary-large" [disabled]="isSaving || assessmentForm.invalid">
+        <span class="material-icons">sync</span>
+        Finish & Sync (Offline)
+      </button>
+      <button type="button" class="btn-text-secondary">SAVE TO DRAFTS</button>
+    </div>
+
+  </form>
+</div>

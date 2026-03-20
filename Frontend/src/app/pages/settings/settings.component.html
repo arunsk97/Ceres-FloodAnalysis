@@ -1,0 +1,104 @@
+<div class="settings-page container">
+  
+  <!-- Header Nav -->
+  <div class="top-nav">
+    <span class="nav-title">Field Journal</span>
+    <button class="btn-sync-pill" (click)="forceSync()">
+      <span class="material-icons sync-icon">sync</span> SYNC NOW
+    </button>
+  </div>
+
+  <!-- Hero Titles -->
+  <div class="hero-section">
+    <h1>Settings & Sync</h1>
+    <div class="super-title">LOCAL DATABASE OVERVIEW</div>
+  </div>
+
+  <!-- Vertical Metrics Stack -->
+  <div class="metrics-stack">
+    <!-- Unsynced Records -->
+    <div class="metric-card">
+      <div class="icon-square bg-green"><span class="material-icons">priority_high</span></div>
+      <div class="metric-label">UNSYNCED RECORDS</div>
+      <div class="metric-value">{{ (pendingCount$ | async) || 0 }}</div>
+      <div class="metric-desc">Assessments pending upload</div>
+    </div>
+
+    <!-- Media Assets -->
+    <div class="metric-card">
+      <div class="icon-square bg-brown"><span class="material-icons">storage</span></div>
+      <div class="metric-label">LOCAL STORAGE</div>
+      <div class="metric-value">
+        {{ storageUsedFormatted.split(' ')[0] }}<span class="unit">{{ storageUsedFormatted.split(' ')[1] }}</span>
+      </div>
+      <div class="metric-desc">{{ storageUsedFormatted }} used of {{ storageQuotaFormatted }}</div>
+    </div>
+  </div>
+
+
+
+  <!-- Action List Group -->
+  <div class="action-list">
+    
+    <!-- Auto Sync Toggle -->
+    <div class="action-row">
+      <div class="action-icon bg-light"><span class="material-icons">autorenew</span></div>
+      <div class="action-text">
+        <h3>Auto-Sync when Online</h3>
+        <p>Upload background data instantly on stable connection</p>
+      </div>
+      <div class="action-control">
+        <label class="toggle-switch">
+          <input type="checkbox" [(ngModel)]="autoSyncEnabled">
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Dev: Simulate Offline Mode -->
+    <div class="action-row">
+      <div class="action-icon bg-light"><span class="material-icons">wifi_off</span></div>
+      <div class="action-text">
+        <h3>Simulate Offline Mode</h3>
+        <p>Artificially disconnect from the server for demo purposes</p>
+      </div>
+      <div class="action-control">
+        <label class="toggle-switch">
+          <input type="checkbox" [(ngModel)]="simulateOffline">
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Export to CSV -->
+    <div class="action-row">
+      <div class="action-icon bg-light"><span class="material-icons">text_snippet</span></div>
+      <div class="action-text">
+        <h3>Export Data to CSV</h3>
+        <p>Generate a local backup of all field assessments</p>
+      </div>
+      <div class="action-control">
+        <button class="btn-export" (click)="exportToCsv()">EXPORT</button>
+      </div>
+    </div>
+
+    <!-- Clear Local Data -->
+    <div class="action-row">
+      <div class="action-icon bg-light"><span class="material-icons">layers</span></div>
+      <div class="action-text">
+        <h3>Clear Local Data</h3>
+        <p>Clear synchronized records to free up space</p>
+      </div>
+      <div class="action-control">
+        <button class="btn-purge" (click)="purgeCache()">CLEAR</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer Versioning -->
+  <div class="footer-version">
+    ENVIRONMENTAL MANAGEMENT SYSTEM V4.2.1<br/>
+    LAST SYNC: TODAY AT 08:14 AM
+  </div>
+</div>

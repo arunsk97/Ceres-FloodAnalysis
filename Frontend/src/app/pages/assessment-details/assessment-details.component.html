@@ -1,0 +1,119 @@
+<div class="assessment-details container" *ngIf="assessment">
+  <!-- Header -->
+  <div class="top-nav">
+    <button class="icon-btn" routerLink="/dashboard">
+      <span class="material-icons">arrow_back</span>
+    </button>
+    <span class="nav-title">Field Journal</span>
+    <button class="btn-sync-pill">SYNC NOW</button>
+  </div>
+
+  <!-- Status Banner (Conditional) -->
+  <div class="status-banner" *ngIf="!assessment.isSynced">
+    <div class="banner-left">
+      <span class="material-icons banner-icon">cloud_off</span>
+      <div class="banner-text">
+        <span class="label">SYSTEM STATUS</span>
+        <strong>Awaiting Local Sync: 1 Pending Record</strong>
+      </div>
+    </div>
+    <div class="banner-right">
+      <button class="btn-text-sync">SYNC<br/>NOW</button>
+    </div>
+  </div>
+
+  <!-- Hero Titles -->
+  <div class="hero-section">
+    <div class="super-title">PRIMARY ASSESSMENT</div>
+    <h1>{{ assessment.farmName || 'Unnamed Farm' }}<span *ngIf="assessment.id" class="id-hash"> #{{ assessment.id.substring(0,3) | uppercase }}</span></h1>
+    
+    <div class="pill-row">
+      <span class="pill-badge"><span class="material-icons text-green">location_on</span> {{ assessment.address }}</span>
+    </div>
+    <div class="pill-row">
+      <span class="pill-badge"><span class="material-icons text-grey">event_note</span> {{ assessment.createdDate | date:'mediumDate' }}</span>
+    </div>
+
+    <button class="btn-edit" (click)="editRecord()">
+      <span class="material-icons">edit</span> EDIT RECORD
+    </button>
+  </div>
+
+  <!-- Map Card -->
+  <div class="map-container">
+    <div class="map-graphic"></div>
+    <div class="map-overlay">
+      <div class="pin-wrapper">
+        <span class="material-icons map-pin">location_on</span>
+      </div>
+      <div class="coords-box">{{ assessment.latitude | number:'1.4-4' }}, {{ assessment.longitude | number:'1.4-4' }}</div>
+      <div class="offline-tag">OFFLINE MAP MODE</div>
+    </div>
+  </div>
+
+  <!-- Chicken Count Card -->
+  <div class="chicken-count-card">
+    <span class="material-icons paw-icon">pets</span>
+    <div class="count-label">CHICKEN COUNT</div>
+    <div class="count-value">{{ assessment.totalChickens | number }}</div>
+    <p class="count-desc">Population stable. Health metrics within normal seasonal variance.</p>
+  </div>
+
+  <!-- Condition Card -->
+  <div class="condition-card">
+    <div class="condition-label">FARM CONDITION</div>
+    <div class="condition-title-row">
+      <span class="material-icons condition-icon">agriculture</span>
+      <h2>{{ getConditionTitle(assessment.condition) }}</h2>
+    </div>
+    <p class="condition-desc">{{ assessment.conditionComments || getConditionDesc(assessment.condition) }}</p>
+  </div>
+
+  <!-- Infrastructure -->
+  <div class="infra-section">
+    <div class="infra-title">SITE INFRASTRUCTURE</div>
+    
+    <div class="infra-row">
+      <span class="infra-name">Water Access</span>
+      <span class="badge" [ngClass]="getInfraStatus(assessment.waterAccess).cssClass">{{ getInfraStatus(assessment.waterAccess).label }}</span>
+    </div>
+    
+    <div class="infra-row">
+      <span class="infra-name">Perimeter Fence</span>
+      <span class="badge" [ngClass]="getInfraStatus(assessment.perimeterFence).cssClass">{{ getInfraStatus(assessment.perimeterFence).label }}</span>
+    </div>
+    
+    <div class="infra-row">
+      <span class="infra-name">Ventilation</span>
+      <span class="badge" [ngClass]="getInfraStatus(assessment.ventilation).cssClass">{{ getInfraStatus(assessment.ventilation).label }}</span>
+    </div>
+  </div>
+
+  <!-- Observations -->
+  <div class="observations-section">
+    <div class="obs-header">
+      <h2>Field<br/>Observations</h2>
+      <span class="captures-count">{{ assessment.photosBase64?.length || 0 }} HIGH-RES<br/>CAPTURES</span>
+    </div>
+
+    <div class="obs-grid">
+      <div class="obs-photo" *ngFor="let photo of assessment.photosBase64; let i = index">
+        <img [src]="photo" alt="Field observation" />
+        <div class="photo-tag">CAPTURE #{{ i + 1 }}</div>
+      </div>
+      
+      <!-- Placeholder images if none uploaded -->
+      <ng-container *ngIf="!assessment.photosBase64?.length">
+         <div class="obs-photo placeholder-bg bg-1">
+           <div class="photo-tag">NO IMAGE UPLOADED</div>
+         </div>
+      </ng-container>
+
+      <button class="btn-add-media" routerLink="/edit/{{assessment.id}}">
+        <span class="material-icons">camera_alt</span>
+        <span>ADD SUPPLEMENTAL MEDIA</span>
+      </button>
+    </div>
+  </div>
+
+</div>
