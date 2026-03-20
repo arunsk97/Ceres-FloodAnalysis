@@ -85,3 +85,10 @@ Backend/FloodAssessment.Api/*.sqlite
 
 # Local Environment variables
 Backend/FloodAssessment.Api/appsettings.Development.json
+
+# Documentation Artifacts
+walkthrough.md
+interview_prep.md
+task.md
+implementation_plan.md
+design.md
