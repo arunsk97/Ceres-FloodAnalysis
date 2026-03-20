@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+/**
+ * NetworkService abstracts the browser's connectivity state.
+ * It provides a "Simulation Toggle" allowing developers and testers to
+ * manually force the app into an offline state to verify PWA synchronization logic.
+ */
 @Injectable({
   providedIn: 'root'
 })

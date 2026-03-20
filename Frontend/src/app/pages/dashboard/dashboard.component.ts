@@ -31,19 +31,14 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Initialize data streams and trigger initial fetch
     this.loadData();
-
-    // Background fetch from server if possible
-    if (this.networkService.isOnline) {
-      this.syncService.pullServerData().then(result => {
-        if (result.success) {
-          // Re-trigger the streams so the new server data magically appears on screen
-          this.loadData();
-        }
-      });
-    }
   }
 
+  /**
+   * Orchestrates the complex RxJS data combine logic.
+   * Merges local IndexedDB drafts with server-side paginated history into a single unified stream.
+   */
   loadData(): void {
     // 1. Load pending drafts from local db
     this.dbService.getAllAssessments().then(records => {
@@ -120,6 +115,10 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  /**
+   * Physically dispatches pagination queries to the .NET API.
+   * Implements Skip/Take logic to prevent loading entire database into mobile memory.
+   */
   async fetchNextServerPage(): Promise<void> {
     try {
       const skip = this.serverSynced$.value.length;

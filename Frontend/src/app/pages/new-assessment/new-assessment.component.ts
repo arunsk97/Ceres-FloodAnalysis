@@ -5,6 +5,10 @@ import { SyncService } from '../../services/sync.service';
 import { NetworkService } from '../../services/network.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
+/**
+ * NewAssessmentComponent handles the creation and editing of flood assessment records.
+ * It manages local state (GPS, images) before committing to the DatabaseService for local-first storage.
+ */
 @Component({
   selector: 'app-new-assessment',
   templateUrl: './new-assessment.component.html',
@@ -129,7 +133,9 @@ export class NewAssessmentComponent implements OnInit {
   }
 
   /**
-   * Follows offline-first flow: saves to local DB and navigates away.
+   * Main save loop implementing the offline-first strategy. 
+   * It calculates a consolidated payload, saves to IndexedDB, and optionally triggers
+   * an "Eager Sync" if the device is currently online.
    */
   async saveAssessment(): Promise<void> {
     if (this.assessmentForm.invalid) {
@@ -140,6 +146,7 @@ export class NewAssessmentComponent implements OnInit {
     this.isSaving = true;
     const formVal = this.assessmentForm.value;
     
+    // Prepare the unified assessment object
     const assessment = {
       id: this.editingId || undefined,
       farmName: formVal.farmName,
@@ -154,23 +161,24 @@ export class NewAssessmentComponent implements OnInit {
       latitude: formVal.latitude,
       longitude: formVal.longitude,
       photosBase64: this.photosBase64.length > 0 ? this.photosBase64 : undefined,
-      isSynced: false, // Critical offline-first flag
+      isSynced: false, // Critical flag for SyncService tracking
       createdDate: this.originalCreatedDate || new Date().toISOString(),
       lastModifiedDate: new Date().toISOString()
     };
 
     try {
+      // 1. Commit to Local persistence first (Guarantee zero data loss)
       await this.dbService.saveAssessment(assessment);
       
-      // Eager Auto-Sync if currently online
+      // 2. Eager Auto-Sync optimization
       if (this.networkService.isOnline) {
-        // Fire asynchronously to avoid blocking navigation
-        this.syncService.pushPendingData().catch(e => console.error("Eager sync failed", e));
+        // Run in background without blocking navigation
+        this.syncService.pushPendingData().catch(e => console.error("Eager push failed", e));
       }
 
       this.router.navigate(['/dashboard']);
     } catch (e) {
-      console.error(e);
+      console.error('Local save failed', e);
       alert('Error saving assessment locally.');
     } finally {
       this.isSaving = false;

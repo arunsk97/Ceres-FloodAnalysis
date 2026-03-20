@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import Dexie, { Table } from 'dexie';
 import { Assessment } from '../models/assessment.model';
 
+/**
+ * DatabaseService provides a local persistence layer using IndexedDb via Dexie.js.
+ * Strictly adheres to an offline-first architecture for disaster zone reliability.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -57,14 +61,15 @@ export class DatabaseService extends Dexie {
   }
 
   /**
-   * Deletes a list of assessments permanently from IndexedDB.
+   * Deletes a set of assessments from local storage.
+   * Part of the "True Wipe" storage strategy to keep the PWA lightweight.
    */
   async deleteAssessments(ids: string[]): Promise<void> {
     await this.assessments.bulkDelete(ids);
   }
 
   /**
-   * Clears the entire database storage.
+   * Completely clears local storage (Used for "Clear Local Data" setting).
    */
   async purgeCache(): Promise<void> {
     await this.assessments.clear();

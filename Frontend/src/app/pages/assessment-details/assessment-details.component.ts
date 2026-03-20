@@ -3,6 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DatabaseService } from '../../services/database.service';
 import { Assessment, FarmCondition } from '../../models/assessment.model';
 
+/**
+ * AssessmentDetailsComponent presents a read-only deep dive into a specific farm record.
+ * It pulls data from the DatabaseService (which hides whether the data is local or server-synced).
+ */
 @Component({
   selector: 'app-assessment-details',
   templateUrl: './assessment-details.component.html',

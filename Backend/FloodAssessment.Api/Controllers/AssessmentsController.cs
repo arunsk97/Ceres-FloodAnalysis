@@ -22,7 +22,9 @@ namespace FloodAssessment.Api.Controllers
         }
 
         /// <summary>
-        /// Retrieves all assessments from the database.
+        /// Retrieves paginated assessments from the SQL database.
+        /// Supports "Lazy Loading" by accepting Skip/Take parameters to minimize
+        /// network payload for historical data extraction.
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] int skip = 0, [FromQuery] int take = 1000)
@@ -38,6 +40,8 @@ namespace FloodAssessment.Api.Controllers
 
         /// <summary>
         /// Receives a list of offline assessments and saves them to the database.
+        /// Implements an "Upsert" (Update or Insert) pattern to handle scenarios where
+        /// a record was edited multiple times while offline.
         /// </summary>
         [HttpPost("sync")]
         public async Task<IActionResult> Sync([FromBody] List<Assessment> assessments)
@@ -59,6 +63,7 @@ namespace FloodAssessment.Api.Controllers
                 }
                 else
                 {
+                    // Update existing record if Ids match (Upsert logic)
                     _context.Entry(existing).CurrentValues.SetValues(assessment);
                 }
             }
