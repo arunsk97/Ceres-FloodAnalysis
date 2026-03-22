@@ -71,6 +71,10 @@ export class SettingsComponent implements OnInit {
    * Forces manual synchronization of all local environmental data
    */
   async forceSync(): Promise<void> {
+    if (!this.networkService.isOnline) {
+      alert('No connection. Please try again when online.');
+      return;
+    }
     const result = await this.syncService.pushPendingData();
     if (result.success) {
       alert(`Synced ${result.count} local records to the global database.`);

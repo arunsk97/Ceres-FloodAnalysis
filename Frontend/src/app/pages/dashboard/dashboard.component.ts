@@ -155,6 +155,10 @@ export class DashboardComponent implements OnInit {
    * Action to manually push all offline data
    */
   async syncNow(): Promise<void> {
+    if (!this.networkService.isOnline) {
+      alert('No connection. Please try again when online.');
+      return;
+    }
     const result = await this.syncService.pushPendingData();
     if (result.success) {
       alert(`Successfully synced ${result.count} records.`);
